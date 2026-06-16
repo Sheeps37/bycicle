@@ -12,7 +12,10 @@ const startButton = document.getElementById("startButton");
 const toast = document.getElementById("toast");
 
 const sprite = new Image();
-sprite.src = "./assets/laoba-cutout-trimmed.png";
+sprite.decoding = "async";
+const spriteSources = ["./assets/laoba-cutout-trimmed.png", "./assets/laoba-cutout.png"];
+let spriteReady = false;
+let spriteSourceIndex = 0;
 
 const input = {
   left: false,
@@ -47,6 +50,41 @@ const obstacleTypes = [
   { name: "bottle", label: "瓶子", color: "#2779a7", kick: 40, speedLoss: 0.94, width: 34, height: 58 },
   { name: "bump", label: "减速带", color: "#e85f44", kick: 34, speedLoss: 0.91, width: 210, height: 20 },
 ];
+
+startButton.disabled = true;
+startButton.textContent = "加载中";
+
+function loadSprite() {
+  sprite.onload = async () => {
+    if (sprite.decode) {
+      await sprite.decode().catch(() => {});
+    }
+    spriteReady = true;
+    startButton.disabled = false;
+    if (state.mode === "ready") startButton.textContent = "开始";
+  };
+
+  sprite.onerror = () => {
+    spriteSourceIndex += 1;
+    if (spriteSourceIndex < spriteSources.length) {
+      sprite.src = spriteSources[spriteSourceIndex];
+      return;
+    }
+    startButton.textContent = "素材失败";
+    overlayText.textContent = "图片素材没有加载成功，刷新页面再试。";
+    showToast("素材加载失败", 2);
+  };
+
+  sprite.src = spriteSources[spriteSourceIndex];
+}
+
+function tryStartGame() {
+  if (!spriteReady) {
+    showToast("素材加载中", 0.8);
+    return;
+  }
+  resetGame();
+}
 
 function resize() {
   state.dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -103,7 +141,7 @@ function setTouchButton(id, key) {
     event.preventDefault();
     input[key] = true;
     button.classList.add("active");
-    if (state.mode !== "playing") resetGame();
+    if (state.mode !== "playing") tryStartGame();
   };
   const off = (event) => {
     event.preventDefault();
@@ -357,12 +395,8 @@ function drawPlayer(w, h) {
   ctx.shadowBlur = 20 + flash * 18;
   ctx.shadowOffsetY = 16;
 
-  if (sprite.complete && sprite.naturalWidth) {
+  if (spriteReady && sprite.naturalWidth) {
     ctx.drawImage(sprite, -spriteWidth * 0.52, -spriteHeight, spriteWidth, spriteHeight);
-  } else {
-    ctx.fillStyle = "#f2bf2f";
-    roundRect(ctx, -spriteWidth * 0.36, -spriteHeight * 0.62, spriteWidth * 0.72, spriteHeight * 0.4, 8);
-    ctx.fill();
   }
   ctx.restore();
 
@@ -422,7 +456,7 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") input.left = true;
   if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") input.right = true;
   if (event.key === "ArrowUp" || event.key.toLowerCase() === "w" || event.code === "Space") input.pedal = true;
-  if (event.key === "Enter" && state.mode !== "playing") resetGame();
+  if (event.key === "Enter" && state.mode !== "playing") tryStartGame();
 });
 window.addEventListener("keyup", (event) => {
   const controlKey =
@@ -439,11 +473,12 @@ window.addEventListener("keyup", (event) => {
   if (event.key === "ArrowUp" || event.key.toLowerCase() === "w" || event.code === "Space") input.pedal = false;
 });
 
-startButton.addEventListener("click", resetGame);
+startButton.addEventListener("click", tryStartGame);
 setTouchButton("leftTouch", "left");
 setTouchButton("rightTouch", "right");
 setTouchButton("pedalTouch", "pedal");
 
+loadSprite();
 resize();
 updateHud();
 requestAnimationFrame(loop);

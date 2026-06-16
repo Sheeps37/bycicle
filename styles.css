@@ -217,6 +217,14 @@ button {
   box-shadow: 0 2px 0 #b07a18, 0 6px 12px rgba(23, 32, 24, 0.14);
 }
 
+.overlay-panel button:disabled {
+  color: rgba(23, 32, 24, 0.48);
+  background: #d9d2bf;
+  box-shadow: none;
+  cursor: wait;
+  transform: none;
+}
+
 .touch-controls {
   position: absolute;
   left: 50%;
