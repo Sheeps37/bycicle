@@ -13,7 +13,12 @@ const toast = document.getElementById("toast");
 
 const sprite = new Image();
 sprite.decoding = "async";
-const spriteSources = ["./assets/laoba-cutout-trimmed.png", "./assets/laoba-cutout.png"];
+const spriteSources = [
+  "./assets/laoba-sprite-mobile.webp",
+  "./assets/laoba-sprite-mobile.png",
+  "./assets/laoba-cutout-trimmed.png",
+  "./assets/laoba-cutout.png",
+];
 let spriteReady = false;
 let spriteSourceIndex = 0;
 
