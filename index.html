@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>老八平衡车挑战</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="game-shell" aria-label="老八平衡车挑战">
+      <canvas id="game" aria-label="game canvas"></canvas>
+
+      <section class="hud" aria-live="polite">
+        <div class="metric">
+          <span>距离</span>
+          <strong id="distance">0m</strong>
+        </div>
+        <div class="metric">
+          <span>分数</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="metric">
+          <span>速度</span>
+          <strong id="speed">0.0</strong>
+        </div>
+        <div class="metric">
+          <span>时间</span>
+          <strong id="time">60.0</strong>
+        </div>
+      </section>
+
+      <section class="balance" aria-label="balance meter">
+        <div class="balance-track">
+          <div class="balance-safe"></div>
+          <div id="balanceNeedle" class="balance-needle"></div>
+        </div>
+      </section>
+
+      <section id="toast" class="toast" aria-live="polite"></section>
+
+      <section id="overlay" class="overlay">
+        <div class="overlay-panel">
+          <h1>老八平衡车挑战</h1>
+          <p id="overlayText">60 秒，稳住，别让快乐翻车。</p>
+          <button id="startButton" type="button">开始</button>
+        </div>
+      </section>
+
+      <nav class="touch-controls" aria-label="touch controls">
+        <button id="leftTouch" type="button" aria-label="left">‹</button>
+        <button id="pedalTouch" type="button" aria-label="accelerate">↑</button>
+        <button id="rightTouch" type="button" aria-label="right">›</button>
+      </nav>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
